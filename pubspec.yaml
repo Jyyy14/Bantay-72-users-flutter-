@@ -1,0 +1,65 @@
+name: bantay_72_users
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_core: ^3.13.0
+  scaler: ^1.1.2+1
+  google_fonts: ^6.2.1
+  cloud_firestore: ^5.6.5
+  firebase_auth: ^5.5.1
+  fluttertoast: ^8.2.12
+  permission_handler: ^11.4.0
+  location: ^8.0.0
+  font_awesome_flutter: ^10.8.0
+  google_sign_in: ^6.3.0
+  fluttericon: ^2.0.0
+  go_router: ^14.8.1
+  intl_phone_field: ^3.1.0
+  image_picker: ^1.1.2
+  file_picker: ^10.1.2
+  open_file: ^3.5.10
+  image: ^4.5.4
+  http: ^1.3.0
+  google_maps_flutter: ^2.12.2
+  geolocator: ^14.0.0
+  flutter_map: ^8.1.1
+  latlong2: ^0.9.1
+  flutter_map_dragmarker: ^8.0.3
+  lottie: ^3.3.1
+  firebase_storage: ^12.4.5
+  cloud_functions: ^5.5.0
+  modal_bottom_sheet: ^3.0.0
+  curved_navigation_bar: ^1.0.6
+  flutter_polyline_points: ^2.1.0
+  flutter_rating_bar: ^4.0.1
+  intl: ^0.20.2
+  onesignal_flutter: ^5.3.2
+  firebase_messaging: ^15.2.6
+  flutter_local_notifications: ^19.2.1
+  flutter_screenutil: ^5.9.3
+  back_button_interceptor: ^8.0.4
+  
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_icons:
+  android: true
+  image_path: "assets/images/capstoneLogo.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/capstoneLogo_foreground.png"
+
+flutter:
+  assets:
+    - assets/images/
+    - assets/animation/
+  uses-material-design: true

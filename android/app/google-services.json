@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "12884863424",
+    "firebase_url": "https://sample-79b30-default-rtdb.firebaseio.com",
+    "project_id": "sample-79b30",
+    "storage_bucket": "sample-79b30.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12884863424:android:eabf8d42897749260fc025",
+        "android_client_info": {
+          "package_name": "com.example.bantay72_responders"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12884863424-8gf4pc4r8lsu2u2jajv5ti68if8cr538.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Wl7XSKbRAaVCE3ragZbng9xMDKzX45g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12884863424-8gf4pc4r8lsu2u2jajv5ti68if8cr538.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "12884863424-89prfhllfanj6coobf5ndoc4rs0pekq1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bantay72Responders"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12884863424:android:12c75f1252667fa80fc025",
+        "android_client_info": {
+          "package_name": "com.example.bantay_72_users"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12884863424-8gf4pc4r8lsu2u2jajv5ti68if8cr538.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Wl7XSKbRAaVCE3ragZbng9xMDKzX45g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12884863424-8gf4pc4r8lsu2u2jajv5ti68if8cr538.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "12884863424-89prfhllfanj6coobf5ndoc4rs0pekq1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bantay72Responders"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
