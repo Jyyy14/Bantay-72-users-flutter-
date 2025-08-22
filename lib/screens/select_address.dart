@@ -172,7 +172,7 @@ class _ChooseFromMapsScreenState extends State<ChooseFromMapsScreen> {
                   'address': searchController.text,
                 }); // return position to previous screen
               },
-              icon: const Icon(Icons.check),
+              leading: const Icon(Icons.check),
               buttonName: 'Confirm Location',
               height: 45.0,
               fontSize: 18.0,

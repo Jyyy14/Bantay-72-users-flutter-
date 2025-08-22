@@ -1,6 +1,5 @@
 // ignore_for_file: unused_local_variable, use_build_context_synchronously, avoid_print, unused_field, unrelated_type_equality_checks, non_constant_identifier_names
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:bantay_72_users/constants.dart';
 import 'package:bantay_72_users/firebase_services/firebase_storage.dart';
 import 'package:bantay_72_users/firebase_services/firestore.dart';
@@ -11,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scaler/scaler.dart';
@@ -105,12 +105,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 13.0),
+                              SizedBox(width: 13.0.w),
                               Text(
                                 'Bantay 72',
                                 style: GoogleFonts.rubik(
                                   color: white,
-                                  fontSize: 25.0,
+                                  fontSize: 25.0.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -134,7 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
                       child: Form(
                         key: _formKey,
                         child: Column(
@@ -155,7 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             : null,
                                 onSaved:
                                     (value) => fullnameController.text = value!,
-                                fontSize: 17.0,
+                                fontSize: 17.0.sp,
                                 fontColor: black,
                                 height: Scaler.height(0.09, context).toDouble(),
                                 width: double.infinity,
@@ -179,10 +179,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               },
                               onSaved:
                                   (value) => usernameController.text = value!,
-                              fontSize: 17.0,
+                              fontSize: 17.0.sp,
                               fontColor: black,
                               height: Scaler.height(0.09, context).toDouble(),
-                              width: Scaler.width(0.9, context).toDouble(),
+                              width: double.infinity,
                             ),
 
                             CustomTextFormField(
@@ -203,10 +203,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 return null;
                               },
                               onSaved: (value) => phoneController.text = value!,
-                              fontSize: 17.0,
+                              fontSize: 17.0.sp,
                               fontColor: black,
                               height: Scaler.height(0.09, context).toDouble(),
-                              width: Scaler.width(0.9, context).toDouble(),
+                              width: double.infinity,
                             ),
 
                             CustomTextFormField(
@@ -243,13 +243,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               },
                               onSaved:
                                   (value) => addressController.text = value!,
-                              fontSize: 17.0,
+                              fontSize: 17.0.sp,
                               fontColor: black,
                               height: Scaler.height(0.08, context).toDouble(),
-                              width: Scaler.width(0.9, context).toDouble(),
+                              width: double.infinity,
                             ),
 
-                            SizedBox(height: 15.0),
+                            SizedBox(height: 15.0.h),
 
                             CustomTextFormField(
                               controller: emailController,
@@ -271,10 +271,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 return null;
                               },
                               onSaved: (value) => emailController.text = value!,
-                              fontSize: 17.0,
+                              fontSize: 17.0.sp,
                               fontColor: black,
                               height: Scaler.height(0.09, context).toDouble(),
-                              width: Scaler.width(0.9, context).toDouble(),
+                              width: double.infinity,
                             ),
                             CustomTextFormField(
                               controller: passwordController,
@@ -292,159 +292,98 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               },
                               onSaved:
                                   (value) => passwordController.text = value!,
-                              fontSize: 17.0,
+                              fontSize: 17.0.sp,
                               fontColor: black,
                               height: Scaler.height(0.09, context).toDouble(),
-                              width: Scaler.width(0.9, context).toDouble(),
+                              width: double.infinity,
+                            ),
+
+                            Column(
+                              children: [
+                                SizedBox(height: 15.0.h),
+                                CustomButton(
+                                  fontWeight: FontWeight.w600,
+                                  onTap: _isSubmitting ? null : _signUpPending,
+                                  isLoading: _isSubmitting,
+                                  // () {
+                                  //   _proceedToVerify();
+                                  // },
+                                  // () => Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => VerificationScreen()),
+                                  // ),
+                                  height: 55.0.h,
+                                  fontSize: 18.0.sp,
+                                  width: double.infinity,
+                                  buttonName:
+                                      _isSubmitting
+                                          ? 'Submitting...'
+                                          : 'Register',
+                                ),
+
+                                SizedBox(height: 6.0.h),
+
+                                CustomButton(
+                                  bgColor: white,
+                                  fontColor: black,
+                                  hasBorder: true,
+                                  splashColor: Colors.grey[300]!,
+                                  fontWeight: FontWeight.w500,
+                                  hasLeading: true,
+                                  leading: Image.asset(
+                                    'assets/images/scanner.png',
+                                  ),
+                                  onTap: _isSubmitting ? null : _signUpPending,
+                                  isLoading: _isSubmitting,
+                                  // () {
+                                  //   _proceedToVerify();
+                                  // },
+                                  // () => Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => VerificationScreen()),
+                                  // ),
+                                  height: 55.0.h,
+                                  fontSize: 16.0.sp,
+                                  width: double.infinity,
+                                  buttonName:
+                                      _isSubmitting
+                                          ? 'Submitting...'
+                                          : 'Scan Credentials',
+                                ),
+
+                                SizedBox(height: 6.0),
+
+                                CustomButton(
+                                  bgColor: white,
+                                  fontColor: black,
+                                  hasBorder: true,
+                                  splashColor: Colors.grey[300]!,
+                                  fontWeight: FontWeight.w500,
+                                  onTap: _isSubmitting ? null : _signUpPending,
+                                  isLoading: _isSubmitting,
+                                  hasLeading: true,
+                                  leading: Image.asset(
+                                    'assets/images/google.png',
+                                  ),
+                                  // () {
+                                  //   _proceedToVerify();
+                                  // },
+                                  // () => Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => VerificationScreen()),
+                                  // ),
+                                  height: 55.0,
+                                  fontSize: 16.0,
+                                  width: double.infinity,
+                                  buttonName:
+                                      _isSubmitting
+                                          ? 'Submitting...'
+                                          : 'Sign up with Google',
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28.0),
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 160.0,
-                            padding: const EdgeInsets.all(10.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            width: double.infinity,
-                            child:
-                                _images.isNotEmpty
-                                    ? GridView.builder(
-                                      itemCount: _images.length + 1,
-                                      gridDelegate:
-                                          const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            crossAxisSpacing: 8.0,
-                                            mainAxisSpacing: 8.0,
-                                          ),
-                                      itemBuilder: (context, index) {
-                                        if (index == _images.length) {
-                                          return GestureDetector(
-                                            onTap: _pickFiles,
-                                            child: const Icon(
-                                              Icons.add,
-                                              size: 40.0,
-                                              color: Primary,
-                                            ),
-                                          );
-                                        } else {
-                                          final file = _images[index];
-                                          return Stack(
-                                            children: [
-                                              GestureDetector(
-                                                onTap:
-                                                    () => _showImagePreview(
-                                                      context,
-                                                      _images[index],
-                                                    ),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        8.0,
-                                                      ),
-                                                  child: Image.memory(
-                                                    file.bytes,
-                                                    width: double.infinity,
-                                                    height: double.infinity,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                              Positioned(
-                                                top: 4,
-                                                right: 4,
-                                                child: GestureDetector(
-                                                  onTap:
-                                                      () => removeImage(index),
-                                                  child: Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                          color: Colors.black54,
-                                                          shape:
-                                                              BoxShape.circle,
-                                                        ),
-                                                    padding:
-                                                        const EdgeInsets.all(4),
-                                                    child: const Icon(
-                                                      Icons.close,
-                                                      size: 16,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        }
-                                      },
-                                    )
-                                    : Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.upload_sharp,
-                                          size: 50.0,
-                                          color: Primary,
-                                        ),
-                                        const SizedBox(height: 10.0),
-                                        CustomButton(
-                                          onTap: _pickFiles,
-                                          height: 40,
-                                          width: 100,
-                                          fontSize: 13.0,
-                                          buttonName: 'Browse',
-                                        ),
-                                      ],
-                                    ),
-                          ),
-
-                          SizedBox(height: 15.0),
-
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "any valid proof of residency e.g. voter's id, etc. (img files only) ",
-                                  style: GoogleFonts.poppins(
-                                    color: black,
-                                    fontSize: 12.0,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  overflow: TextOverflow.clip,
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          SizedBox(height: 15.0),
-
-                          CustomButton(
-                            onTap: _isSubmitting ? null : _signUpPending,
-                            isLoading: _isSubmitting,
-                            // () {
-                            //   _proceedToVerify();
-                            // },
-                            // () => Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(builder: (context) => VerificationScreen()),
-                            // ),
-                            height: 45.0,
-                            fontSize: 18.0,
-                            width: double.infinity,
-                            buttonName:
-                                _isSubmitting
-                                    ? 'Submitting...'
-                                    : 'Submit for Verification',
-                          ),
-                        ],
                       ),
                     ),
 
@@ -485,7 +424,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             if (_isLoading)
               Container(
                 color: Colors.black54,
-                child: const Center(child: CircularProgressIndicator(color: Primary,)),
+                child: const Center(
+                  child: CircularProgressIndicator(color: Primary),
+                ),
               ),
           ],
         ),

@@ -19,7 +19,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
-import 'package:scaler/scaler.dart';
 
 class ReportEmergencyScreen extends StatefulWidget {
   const ReportEmergencyScreen({super.key});

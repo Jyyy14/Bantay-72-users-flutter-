@@ -5,7 +5,7 @@ import 'package:bantay_72_users/screens/reset_password.dart';
 import 'package:bantay_72_users/screens/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';  // <-- changed
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // <-- changed
 import '../widgets/button.dart';
 import '../widgets/textformfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -114,8 +114,9 @@ class _LogInScreenState extends State<LogInScreen> {
                           color: const Color.fromARGB(144, 0, 0, 0),
                         ),
                         isEmail: true,
-                        validator: (value) =>
-                            value!.isEmpty ? 'Enter your email' : null,
+                        validator:
+                            (value) =>
+                                value!.isEmpty ? 'Enter your email' : null,
                         onSaved: (value) => emailController.text = value!,
                         fontSize: 17.sp,
                         fontColor: Colors.black,
@@ -127,8 +128,9 @@ class _LogInScreenState extends State<LogInScreen> {
                         controller: passwordController,
                         labelText: 'Password',
                         isObscure: true,
-                        validator: (value) =>
-                            value!.isEmpty ? 'Enter your password' : null,
+                        validator:
+                            (value) =>
+                                value!.isEmpty ? 'Enter your password' : null,
                         onSaved: (value) => passwordController.text = value!,
                         fontSize: 17.sp,
                         fontColor: black,
@@ -137,11 +139,12 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
 
                       GestureDetector(
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ResetPasswordScreen(),
-                          ),
-                        ),
+                        onTap:
+                            () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ResetPasswordScreen(),
+                              ),
+                            ),
                         child: Text(
                           'Forgot password?',
                           style: GoogleFonts.poppins(
@@ -156,19 +159,21 @@ class _LogInScreenState extends State<LogInScreen> {
                       CustomButton(
                         onTap: _login,
                         fontSize: 18.sp,
-                        height: 50.h,
+                        height: 58.h,
                         width: double.infinity,
                         buttonName: 'Login',
                       ),
+
                       SizedBox(height: 8.h),
-                      
+
                       GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SignUpScreen(),
-                          ),
-                        ),
+                        onTap:
+                            () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SignUpScreen(),
+                              ),
+                            ),
                         child: Center(
                           child: Text(
                             'Create new Account',
@@ -179,11 +184,61 @@ class _LogInScreenState extends State<LogInScreen> {
                           ),
                         ),
                       ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 15.0),
+                        child: Row(
+                          children: [
+                            const Expanded(
+                              child: Divider(
+                                color: Colors.grey,
+                                thickness: 1,
+                                endIndent: 10, // space between line and text
+                              ),
+                            ),
+                            Text(
+                              "or",
+                              style: TextStyle(
+                                color: black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const Expanded(
+                              child: Divider(
+                                color: Colors.grey,
+                                thickness: 1,
+                                indent: 10, // space between text and line
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      CustomButton(
+                        bgColor: white,
+                        fontColor: black,
+                        hasBorder: true,
+                        splashColor: Colors.grey[300]!,
+                        fontWeight: FontWeight.w500,
+                        onTap: () {},
+                        hasLeading: true,
+                        leading: Image.asset('assets/images/google.png'),
+                        // () {
+                        //   _proceedToVerify();
+                        // },
+                        // () => Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => VerificationScreen()),
+                        // ),
+                        height: 58.0,
+                        fontSize: 16.0,
+                        width: double.infinity,
+                        buttonName: 'Sign in with Google',
+                      ),
                     ],
                   ),
                 ),
-
-                SizedBox(height: 0.13.sh),
               ],
             ),
           ),
