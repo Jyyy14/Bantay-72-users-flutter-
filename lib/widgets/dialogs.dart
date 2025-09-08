@@ -5,6 +5,7 @@ import 'package:bantay_72_users/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:scaler/scaler.dart';
@@ -14,6 +15,9 @@ Future<void> customDialog(
   BuildContext context, {
   required String title,
   required String content,
+  double? titleFontSize, // 👈 optional
+  double? contentFontSize,
+  bool? textCenter = false,
 }) {
   return showDialog(
     context: context,
@@ -24,9 +28,12 @@ Future<void> customDialog(
           style: GoogleFonts.poppins(
             color: Primary,
             fontWeight: FontWeight.w600,
+            fontSize: titleFontSize ?? 25.0.sp,
           ),
+          textAlign: textCenter == true ? TextAlign.center : TextAlign.left,
+          overflow: TextOverflow.clip,
         ),
-        content: Text(content, style: GoogleFonts.poppins()),
+        content: Text(content, style: GoogleFonts.poppins(fontSize: contentFontSize ?? 16.0.sp)),
         actions: <Widget>[
           SizedBox(
             height: 40,

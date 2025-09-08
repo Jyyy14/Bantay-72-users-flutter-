@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:google_fonts/google_fonts.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../constants.dart';
 import 'package:flutter/material.dart';
 
@@ -78,13 +77,13 @@ class CustomButton extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Transform.scale(
-                            scale: 0.6,
+                            scale: 0.5,
                             child: leading!,
                           ),
                           Text(
                             buttonName,
                             style: GoogleFonts.poppins(
-                              color: Colors.black,
+                              color: fontColor,
                               fontSize: fontSize,
                               fontWeight: fontWeight,
                             ),

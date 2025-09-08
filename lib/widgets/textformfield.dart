@@ -26,6 +26,7 @@ class CustomTextFormField extends StatefulWidget {
     this.inputFormatters = const [],
     this.onChanged,
     this.prefixIcon,
+    this.readonly = false,
   });
 
   final isEmail;
@@ -42,6 +43,7 @@ class CustomTextFormField extends StatefulWidget {
   final hintText;
   final fillColor;
   final Function(String)? onChanged;
+  final bool readonly;
 
   TextInputType keyboardType;
   int maxLength;
@@ -53,6 +55,20 @@ class CustomTextFormField extends StatefulWidget {
 
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   bool secureText = true;
+  bool showClear = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_updateClearButton);
+  }
+
+  void _updateClearButton() {
+    setState(() {
+      showClear = widget.controller.text.isNotEmpty;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     widget.keyboardType = widget.keyboardType;
@@ -60,6 +76,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       height: widget.height,
       width: widget.width,
       child: TextFormField(
+        readOnly: widget.readonly == true ? true : false,
         validator: widget.validator,
         onSaved: widget.onSaved,
         onChanged: widget.onChanged,
@@ -126,6 +143,13 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     ),
                   )
                   : null),
+          suffixIcon:
+              showClear
+                  ? IconButton(
+                    icon: const Icon(Icons.clear, color: Colors.grey),
+                    onPressed: () => widget.controller.clear(),
+                  )
+                  : null,
         ),
       ),
     );

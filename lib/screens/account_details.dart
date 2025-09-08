@@ -128,10 +128,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text(
-          'Account Details',
-          style: GoogleFonts.poppins(color: white),
-        ),
+        title: Text('Profile', style: GoogleFonts.poppins(color: white)),
         backgroundColor: Primary,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_sharp),
@@ -155,11 +152,47 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                       SingleChildScrollView(
                         child: Column(
                           children: [
+                            Center(
+                              child: Stack(
+                                children: [
+                                  Icon(
+                                    Icons.account_circle,
+                                    size: 120.0,
+                                    color: Colors.grey,
+                                  ),
+                                  Positioned(
+                                    bottom: 8,
+                                    right: 10,
+                                    child: CircleAvatar(
+                                      radius: 18,
+                                      backgroundColor: Color(0xFFFEF7FF),
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        size: 18,
+                                        color: black,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 30),
+
                             _buildTextField(
                               'Username',
                               usernameController,
                               icon: Icon(
                                 Icons.person,
+                                color: const Color.fromARGB(144, 0, 0, 0),
+                              ),
+                            ),
+
+                            _buildTextField(
+                              'Mobile Number',
+                              phoneController,
+                              icon: Icon(
+                                Icons.phone,
                                 color: const Color.fromARGB(144, 0, 0, 0),
                               ),
                             ),
@@ -175,14 +208,6 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                               'Change Password',
                               passwordController,
                               obscure: true,
-                            ),
-                            _buildTextField(
-                              'Mobile Number',
-                              phoneController,
-                              icon: Icon(
-                                Icons.phone,
-                                color: const Color.fromARGB(144, 0, 0, 0),
-                              ),
                             ),
                           ],
                         ),

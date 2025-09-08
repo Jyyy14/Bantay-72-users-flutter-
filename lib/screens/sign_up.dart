@@ -1,18 +1,24 @@
 // ignore_for_file: unused_local_variable, use_build_context_synchronously, avoid_print, unused_field, unrelated_type_equality_checks, non_constant_identifier_names
-import 'dart:convert';
+import 'dart:io';
 import 'package:bantay_72_users/constants.dart';
 import 'package:bantay_72_users/firebase_services/firebase_storage.dart';
 import 'package:bantay_72_users/firebase_services/firestore.dart';
 import 'package:bantay_72_users/screens/login.dart';
 import 'package:bantay_72_users/screens/select_address.dart';
 import 'package:bantay_72_users/screens/verify.dart';
+import 'package:bantay_72_users/screens/verify_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mlkit_document_scanner/google_mlkit_document_scanner.dart';
+import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/retry.dart';
 import 'package:scaler/scaler.dart';
 import '../widgets/button.dart';
 import '../widgets/textformfield.dart';
@@ -24,6 +30,33 @@ class UploadedImage {
   final String name;
 
   UploadedImage(this.bytes, this.base64, this.name);
+}
+
+class PhoneNumberFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(
+      RegExp(r'\D'),
+      '',
+    ); // keep only digits
+    String formatted = '';
+
+    for (int i = 0; i < digits.length && i < 11; i++) {
+      formatted += digits[i];
+
+      if (i == 3 || i == 6) {
+        formatted += '-'; // add dash after 4th and 7th digit
+      }
+    }
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
 }
 
 class SignUpScreen extends StatefulWidget {
@@ -50,6 +83,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+
+  File? selectedImage;
 
   @override
   void dispose() {
@@ -189,6 +224,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(11),
+                                PhoneNumberFormatter(),
                               ],
                               controller: phoneController,
                               labelText: 'Phone',
@@ -322,99 +359,116 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
 
                                 SizedBox(height: 6.0.h),
-
-                                CustomButton(
-                                  bgColor: white,
-                                  fontColor: black,
-                                  hasBorder: true,
-                                  splashColor: Colors.grey[300]!,
-                                  fontWeight: FontWeight.w500,
-                                  hasLeading: true,
-                                  leading: Image.asset(
-                                    'assets/images/scanner.png',
-                                  ),
-                                  onTap: _isSubmitting ? null : _signUpPending,
-                                  isLoading: _isSubmitting,
-                                  // () {
-                                  //   _proceedToVerify();
-                                  // },
-                                  // () => Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(builder: (context) => VerificationScreen()),
-                                  // ),
-                                  height: 55.0.h,
-                                  fontSize: 16.0.sp,
-                                  width: double.infinity,
-                                  buttonName:
-                                      _isSubmitting
-                                          ? 'Submitting...'
-                                          : 'Scan Credentials',
-                                ),
-
-                                SizedBox(height: 6.0),
-
-                                CustomButton(
-                                  bgColor: white,
-                                  fontColor: black,
-                                  hasBorder: true,
-                                  splashColor: Colors.grey[300]!,
-                                  fontWeight: FontWeight.w500,
-                                  onTap: _isSubmitting ? null : _signUpPending,
-                                  isLoading: _isSubmitting,
-                                  hasLeading: true,
-                                  leading: Image.asset(
-                                    'assets/images/google.png',
-                                  ),
-                                  // () {
-                                  //   _proceedToVerify();
-                                  // },
-                                  // () => Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(builder: (context) => VerificationScreen()),
-                                  // ),
-                                  height: 55.0,
-                                  fontSize: 16.0,
-                                  width: double.infinity,
-                                  buttonName:
-                                      _isSubmitting
-                                          ? 'Submitting...'
-                                          : 'Sign up with Google',
-                                ),
                               ],
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 15.0,
+                              ),
+                              child: Row(
+                                children: [
+                                  const Expanded(
+                                    child: Divider(
+                                      color: Colors.grey,
+                                      thickness: 1,
+                                      endIndent:
+                                          10, // space between line and text
+                                    ),
+                                  ),
+                                  Text(
+                                    "or",
+                                    style: TextStyle(
+                                      color: black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const Expanded(
+                                    child: Divider(
+                                      color: Colors.grey,
+                                      thickness: 1,
+                                      indent: 10, // space between text and line
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            CustomButton(
+                              bgColor: white,
+                              fontColor: black,
+                              hasBorder: true,
+                              splashColor: Colors.grey[300]!,
+                              fontWeight: FontWeight.w500,
+                              onTap: () async {
+                                final user = await signUpWithGoogle();
+                                if (user != null) {
+                                  print(
+                                    "Signed up: ${user.displayName}, ${user.email}",
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => VerifyScreen(
+                                            isGoogleSignUp: true,
+                                          ),
+                                    ),
+                                  );
+                                  // redirect to verify screen for address + barangay certificate
+                                }
+                              },
+
+                              hasLeading: true,
+                              leading: Image.asset('assets/images/google.png'),
+                              // () {
+                              //   _proceedToVerify();
+                              // },
+                              // () => Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(builder: (context) => VerificationScreen()),
+                              // ),
+                              height: 58.0,
+                              fontSize: 16.0,
+                              width: double.infinity,
+                              buttonName: 'Sign up with Google',
                             ),
                           ],
                         ),
                       ),
                     ),
 
-                    SizedBox(height: 8.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Already a member?',
-                          style: GoogleFonts.poppins(
-                            color: black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap:
-                              () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LogInScreen(),
-                                ),
-                              ),
-                          child: Text(
-                            '\tLog In',
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Already a member?',
                             style: GoogleFonts.poppins(
-                              color: Primary,
-                              fontWeight: FontWeight.w700,
+                              color: black,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ),
-                      ],
+                          GestureDetector(
+                            onTap:
+                                () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LogInScreen(),
+                                  ),
+                                ),
+                            child: Text(
+                              '\tLog In',
+                              style: GoogleFonts.poppins(
+                                color: Primary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -432,6 +486,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
+  }
+
+  Future<User?> signUpWithGoogle() async {
+    try {
+      await GoogleSignIn().signOut(); // clears cached account
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) return null; // user canceled
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(
+        credential,
+      );
+
+      return userCredential.user;
+    } catch (e) {
+      print("Google Sign-Up error: $e");
+      return null;
+    }
   }
 
   Future<void> _proceedToVerify() async {
@@ -461,60 +541,135 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  Future<void> _pickFiles() async {
-    final result = await FilePicker.platform.pickFiles(
-      withData: true,
-      type: FileType.image,
-      allowMultiple: true,
+  Future<void> _scanDocument() async {
+    final options = DocumentScannerOptions(
+      documentFormat: DocumentFormat.jpeg,
+      mode: ScannerMode.full,
+      isGalleryImport: true,
     );
 
-    if (result != null && result.files.isNotEmpty) {
-      int added = 0;
-      bool duplicateShown = false;
-      bool limitReachedShown = false;
+    final scanner = DocumentScanner(options: options);
+
+    try {
+      final result = await scanner.scanDocument();
+      if (result.images.isEmpty) return;
+
+      // Use first scanned page (you can loop if multi-page)
+      final imagePath = result.images.first;
+      final inputImage = InputImage.fromFilePath(imagePath);
+
+      final textRecognizer = TextRecognizer(
+        script: TextRecognitionScript.latin,
+      );
+      final recognizedText = await textRecognizer.processImage(inputImage);
+
+      final rawText = recognizedText.text;
+      print("OCR Result:\n$rawText");
+
+      final fullname = _extractName(rawText);
+      final address = _extractAddress(rawText);
 
       setState(() {
-        for (var file in result.files) {
-          if (_images.length >= 3) {
-            if (!limitReachedShown) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('You can only upload up to 3 images.'),
-                ),
-              );
-              limitReachedShown = true;
-            }
-            break;
-          }
-
-          final isDuplicate = _images.any((img) => img.name == file.name);
-
-          if (isDuplicate) {
-            if (!duplicateShown) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('You already uploaded this image'),
-                ),
-              );
-              duplicateShown = true;
-            }
-            continue;
-          }
-
-          if (file.bytes != null) {
-            final base64Str = base64Encode(file.bytes!);
-            _images.add(UploadedImage(file.bytes!, base64Str, file.name));
-            added++;
-          }
-        }
+        if (fullname.isNotEmpty) fullnameController.text = fullname;
+        if (address.isNotEmpty) addressController.text = address;
       });
 
-      if (added == 0 && !duplicateShown && !limitReachedShown) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No valid images were selected.')),
-        );
-      }
+      await textRecognizer.close();
+      await scanner.close();
+    } catch (e) {
+      print("Error scanning document: $e");
     }
+
+    // final result = await FilePicker.platform.pickFiles(
+    //   type: FileType.image,
+    //   allowMultiple: false,
+    // );
+
+    // if (result == null) return;
+
+    // final filepath = result.files.single.path;
+    // if (filepath == null) return;
+
+    // final inputImage = InputImage.fromFilePath(filepath);
+    // final textRecognizer = TextRecognizer();
+    // final RecognizedText recognizedText = await textRecognizer.processImage(
+    //   inputImage,
+    // );
+
+    // final rawText = recognizedText.text;
+    // print("OCR Result:\n$rawText");
+
+    // final fullname = _extractName(rawText);
+    // final address = _extractAddress(rawText);
+
+    // setState(() {
+    //   if (fullname.isNotEmpty) fullnameController.text = fullname;
+    //   if (address.isNotEmpty) addressController.text = address;
+    // });
+
+    // if (result != null && result.files.isNotEmpty) {
+    //   int added = 0;
+    //   bool duplicateShown = false;
+    //   bool limitReachedShown = false;
+
+    //   setState(() {
+    //     for (var file in result.files) {
+    //       if (_images.length >= 3) {
+    //         if (!limitReachedShown) {
+    //           ScaffoldMessenger.of(context).showSnackBar(
+    //             const SnackBar(
+    //               content: Text('You can only upload up to 3 images.'),
+    //             ),
+    //           );
+    //           limitReachedShown = true;
+    //         }
+    //         break;
+    //       }
+
+    //       final isDuplicate = _images.any((img) => img.name == file.name);
+
+    //       if (isDuplicate) {
+    //         if (!duplicateShown) {
+    //           ScaffoldMessenger.of(context).showSnackBar(
+    //             const SnackBar(
+    //               content: Text('You already uploaded this image'),
+    //             ),
+    //           );
+    //           duplicateShown = true;
+    //         }
+    //         continue;
+    //       }
+
+    //       if (file.bytes != null) {
+    //         final base64Str = base64Encode(file.bytes!);
+    //         _images.add(UploadedImage(file.bytes!, base64Str, file.name));
+    //         added++;
+    //       }
+    //     }
+    //   });
+
+    //   if (added == 0 && !duplicateShown && !limitReachedShown) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(content: Text('No valid images were selected.')),
+    //     );
+    //   }
+    // }
+  }
+
+  String _extractName(String text) {
+    // Looks for "certify" followed immediately by the name, stopping before age
+    final regex = RegExp(r'certify\s*([A-Z\s\.]+)\s+\d{1,2}\s*yrs?\.?');
+    final match = regex.firstMatch(text);
+    return match != null ? match.group(1)!.trim() : "";
+  }
+
+  String _extractAddress(String text) {
+    final regex = RegExp(
+      r'residence and postal address at\s+(.*)',
+      caseSensitive: false,
+    );
+    final match = regex.firstMatch(text);
+    return match != null ? match.group(1)!.trim() : "";
   }
 
   void _showImagePreview(BuildContext context, UploadedImage image) {
@@ -547,6 +702,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
     );
   }
+
+  // Future<void> _uploadImage () async{
+  //   List<MediaFile>? media = await GalleryPicker.pickMedia(context: context, singleMedia: true);
+
+  //   if (media != null && media.isNotEmpty){
+  //     var data = await media.first.getFile();
+  //     setState(() {
+  //       selectedImage = data;
+  //     });
+  //   }
+
+  // }
 
   void removeImage(int index) {
     setState(() {

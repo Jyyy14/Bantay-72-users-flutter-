@@ -25,7 +25,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
   final User? user = FirebaseAuth.instance.currentUser;
   final items = <Widget>[
     Icon(Icons.home),
@@ -38,16 +37,22 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2),
-    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      customDialog(
+        context,
+        title: 'Use this app responsibly',
+        content:
+            'Sending false emergency reports is a serious offense. Misuse of the HELP button or fake emergency alerts may result in legal consequences, including fines or imprisonment under the law. ',
+        titleFontSize: 20.0.sp,
+        textCenter: true,
+      );
+    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _controller.dispose();
     super.dispose();
   }
 
@@ -142,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen>
       await FirebaseAuth.instance.signOut();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => GetStartedScreen ()),
+        MaterialPageRoute(builder: (_) => GetStartedScreen()),
       );
     }
 
@@ -273,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     text:
                                         isDisabled
                                             ? ' Resolved.'
-                                            : ' SOS button ',
+                                            : ' Help button ',
                                     style: GoogleFonts.poppins(
                                       color: isDisabled ? completed : Primary,
                                       fontWeight: FontWeight.w600,
@@ -294,10 +299,6 @@ class _HomeScreenState extends State<HomeScreen>
                           opacity: isDisabled ? 0.5 : 1.0,
                           child: GestureDetector(
                             onTap: () async {
-                              _controller.forward(from: 0);
-                              await Future.delayed(
-                                _controller.duration ?? Duration(seconds: 2),
-                              );
                               if (mounted) {
                                 Navigator.push(
                                   context,
@@ -316,17 +317,14 @@ class _HomeScreenState extends State<HomeScreen>
                                     scale: 1,
                                     child: Lottie.asset(
                                       'assets/animation/sos.json',
-                                      controller: _controller,
-                                      onLoaded: (composition) {
-                                        _controller.duration =
-                                            composition.duration;
-                                      },
+                                      animate: false, // 👈 disables animation
+                                      repeat: false,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                                 Text(
-                                  'SOS',
+                                  'Help',
                                   style: GoogleFonts.poppins(
                                     color: white,
                                     fontSize: 30.sp,

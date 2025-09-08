@@ -170,7 +170,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
 
             Container(
-              color: Colors.white,
               padding: const EdgeInsets.only(top: 10.0),
               child: CustomButton(
                 onTap: () => _handleLogOut(context),
