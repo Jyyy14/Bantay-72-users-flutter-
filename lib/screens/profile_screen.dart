@@ -2,11 +2,13 @@ import 'package:bantay_72_users/constants.dart';
 import 'package:bantay_72_users/firebase_services/firestore.dart';
 import 'package:bantay_72_users/screens/about.dart';
 import 'package:bantay_72_users/screens/account_details.dart';
+import 'package:bantay_72_users/screens/history.dart';
 import 'package:bantay_72_users/screens/home.dart';
 import 'package:bantay_72_users/screens/settings.dart';
 import 'package:bantay_72_users/widgets/button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:scaler/scaler.dart';
 
@@ -84,11 +86,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: 20.0,
+                vertical: 10.0,
                 horizontal: 25.0,
               ),
               child: ListView(
                 children: [
+                  _buildMenuItem(context, 'Report History', HistoryScreen()),
+                  const SizedBox(height: 10.0),
                   _buildMenuItem(context, 'Settings', SettingsScreen()),
                   const SizedBox(height: 10.0),
                   _buildMenuItem(context, 'About', AboutScreen()),

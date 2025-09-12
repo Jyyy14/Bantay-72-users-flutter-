@@ -2,7 +2,7 @@ class ParsedID {
   final String? address;
   final String? idType;
 
-  ParsedID({required this.address, required this.idType});
+  ParsedID({this.address = '', required this.idType});
 }
 
 ParsedID parsePhilID(String text) {
@@ -95,10 +95,7 @@ ParsedID parsePassport(String text) {
 }
 
 ParsedID parseVotersID(String text) {
-  final nameRegex = RegExp(r'NAME\s*:?\s*([A-Z\s]+),\s*([A-Z\s]+)\s*([A-Z]*)');
   final addressRegex = RegExp(r'ADDRESS\s*:?\s*(.+)');
-
-  final nameMatch = nameRegex.firstMatch(text);
   final addressMatch = addressRegex.firstMatch(text);
 
   return ParsedID(
@@ -137,6 +134,6 @@ ParsedID parseID(String text) {
     case "Passport":
       return parsePassport(text);
     default:
-      return ParsedID(address: "", idType: "Unknown");
+      return ParsedID(address: '', idType: "Unknown");
   }
 }

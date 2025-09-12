@@ -1,11 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:bantay_72_users/constants.dart';
+import 'package:bantay_72_users/screens/emergency_screen.dart';
 import 'package:bantay_72_users/screens/generate_report.dart';
 import 'package:bantay_72_users/screens/get_started.dart';
+import 'package:bantay_72_users/screens/help.dart';
 import 'package:bantay_72_users/screens/history.dart';
 import 'package:bantay_72_users/screens/notifications.dart';
 import 'package:bantay_72_users/screens/profile_screen.dart';
+import 'package:bantay_72_users/widgets/button.dart';
 import 'package:bantay_72_users/widgets/dialogs.dart';
 import 'package:bantay_72_users/widgets/status_bar.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -28,32 +31,33 @@ class _HomeScreenState extends State<HomeScreen>
   final User? user = FirebaseAuth.instance.currentUser;
   final items = <Widget>[
     Icon(Icons.home),
-    Icon(Icons.info),
+    Icon(Icons.report),
+    Icon(Icons.warning),
     Icon(Icons.person),
   ];
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
 
   @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      customDialog(
-        context,
-        title: 'Use this app responsibly',
-        content:
-            'Sending false emergency reports is a serious offense. Misuse of the HELP button or fake emergency alerts may result in legal consequences, including fines or imprisonment under the law. ',
-        titleFontSize: 20.0.sp,
-        textCenter: true,
-      );
-    });
-  }
-
-  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  String getGreeting() {
+    final now = DateTime.now();
+    final hour = now.hour;
+    final minute = now.minute;
+
+    if (hour >= 5 && (hour < 9 || (hour == 9 && minute <= 30))) {
+      return "umaga"; // 5:00am - 9:30am
+    } else if (hour >= 10 && hour < 14) {
+      return "tanghali"; // 10:00am - 1:59pm
+    } else if (hour >= 14 && hour < 18) {
+      return "hapon"; // optional: 2:00pm - 5:59pm
+    } else {
+      return "gabi"; // 6:00pm - 4:59am
+    }
   }
 
   @override
@@ -113,7 +117,8 @@ class _HomeScreenState extends State<HomeScreen>
             index: _selectedIndex,
             children: [
               _buildHomeContent(username),
-              const HistoryScreen(),
+              HelpScreen(),
+              const EmergencyScreen(),
               const ProfileScreen(),
             ],
           ),
@@ -209,9 +214,6 @@ class _HomeScreenState extends State<HomeScreen>
                   .where('status', whereIn: statuses)
                   .snapshots(),
           builder: (context, snapshot) {
-            final reportCount = snapshot.data?.docs.length ?? 0;
-            final isDisabled = reportCount >= 3;
-
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,135 +221,191 @@ class _HomeScreenState extends State<HomeScreen>
                   SizedBox(height: 35.h),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 30.w),
-                    child: Text.rich(
-                      TextSpan(
-                        text: 'Welcome, ',
-                        style: GoogleFonts.poppins(
-                          color: black,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 30.sp,
-                        ),
-                        children: [
+                    child: Column(
+                      children: [
+                        Text.rich(
                           TextSpan(
-                            text: '$username!',
+                            text: 'Magandang ${getGreeting()}, ',
                             style: GoogleFonts.poppins(
-                              color: Primary,
+                              color: black,
                               fontWeight: FontWeight.w600,
                               fontSize: 30.sp,
                             ),
+                            children: [
+                              TextSpan(
+                                text: '$username!',
+                                style: GoogleFonts.poppins(
+                                  color: Primary,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 30.sp,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                          softWrap: true,
+                          maxLines: 2,
+                          overflow:
+                              TextOverflow
+                                  .ellipsis, // optional: avoids layout breaking
+                        ),
+
+                        const SizedBox(height: 35),
+
+                        SizedBox(
+                          width: double.infinity,
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(color: black, width: 1.5),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Your report matters!',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 4.0),
+
+                                  Text(
+                                    'Report any concerns in your area for a safer community!',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 14.0),
+
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomButton(
+                                          onTap: () =>  Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          HistoryScreen(),
+                                                ),
+                                              ),
+                                          height: 45,
+                                          width: double.infinity,
+                                          buttonName: 'View Reports',
+                                          fontSize: 14.sp,
+                                        ),
+                                      ),
+
+                                      Expanded(
+                                        child: CustomButton(
+                                          onTap:
+                                              () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          ReportEmergencyScreen(),
+                                                ),
+                                              ),
+                                          height: 45,
+                                          width: double.infinity,
+                                          buttonName: 'Report an issue',
+                                          fontSize: 14.sp,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Discover Latest News',
+                              style: GoogleFonts.poppins(
+                                color: black,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+
+                            const SizedBox(height: 4.0),
+
+                            Text(
+                              'Latest news and updates in Barangay 72',
+                              style: GoogleFonts.poppins(
+                                color: black,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.asset('assets/images/news.png'),
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                Text(
+                                  'COMMUNITY',
+                                  style: GoogleFonts.poppins(
+                                    color: Primary,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                Text(
+                                  'Barangay 72 holds community clean-up drive',
+                                  style: GoogleFonts.poppins(
+                                    color: black,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      softWrap: true,
-                      maxLines: 2,
-                      overflow:
-                          TextOverflow
-                              .ellipsis, // optional: avoids layout breaking
                     ),
                   ),
 
                   SizedBox(height: 24.h),
 
-                  Column(
-                    children: [
-                      Center(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isDisabled
-                                  ? 'You have reached the reports limit.'
-                                  : 'Help is just a click away',
-                              style: GoogleFonts.poppins(
-                                color: Color(0xFF424B5A),
-                                fontSize: isDisabled ? 17.sp : 20.sp,
-                              ),
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                text:
-                                    isDisabled
-                                        ? 'Wait for other reports to be'
-                                        : 'Tap',
-                                style: GoogleFonts.poppins(
-                                  color: Color(0xFF424B5A),
-                                  fontSize: isDisabled ? 17.sp : 20.sp,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text:
-                                        isDisabled
-                                            ? ' Resolved.'
-                                            : ' Help button ',
-                                    style: GoogleFonts.poppins(
-                                      color: isDisabled ? completed : Primary,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: isDisabled ? 17.sp : 20.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-
-                      AbsorbPointer(
-                        absorbing: isDisabled,
-                        child: Opacity(
-                          opacity: isDisabled ? 0.5 : 1.0,
-                          child: GestureDetector(
-                            onTap: () async {
-                              if (mounted) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => ReportEmergencyScreen(),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                ClipOval(
-                                  child: Transform.scale(
-                                    scale: 1,
-                                    child: Lottie.asset(
-                                      'assets/animation/sos.json',
-                                      animate: false, // 👈 disables animation
-                                      repeat: false,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  'Help',
-                                  style: GoogleFonts.poppins(
-                                    color: white,
-                                    fontSize: 30.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 30.h),
-
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.w),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: ReportStatusBar(),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 25.w),
+                  //   child: Align(
+                  //     alignment: Alignment.bottomCenter,
+                  //     child: ReportStatusBar(),
+                  //   ),
+                  // ),
                 ],
               ),
             );

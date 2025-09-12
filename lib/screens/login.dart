@@ -125,6 +125,7 @@ class _LogInScreenState extends State<LogInScreen> {
                       ),
 
                       CustomTextFormField(
+                        isLast: true,
                         controller: passwordController,
                         labelText: 'Password',
                         isObscure: true,

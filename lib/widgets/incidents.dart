@@ -17,7 +17,7 @@ class IncidentsButton extends StatelessWidget {
   final Color fontColor;
   final Color selectedButt;
   final Color selectedButtText;
-  final Icon icon;
+  final Icon? icon;
 
   const IncidentsButton({
     super.key,
@@ -31,7 +31,7 @@ class IncidentsButton extends StatelessWidget {
     this.fontColor = black,
     this.selectedButt = selected,
     this.selectedButtText = selectedText,
-    required this.icon,
+    this.icon,
     this.pressed = false,
   });
 
@@ -49,7 +49,7 @@ class IncidentsButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              icon,
+              icon ?? Container(), // Show icon if not null
               Text(
                 buttonName,
                 style: GoogleFonts.poppins(

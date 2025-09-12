@@ -27,6 +27,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onChanged,
     this.prefixIcon,
     this.readonly = false,
+    this.isLast = false,
   });
 
   final isEmail;
@@ -44,6 +45,7 @@ class CustomTextFormField extends StatefulWidget {
   final fillColor;
   final Function(String)? onChanged;
   final bool readonly;
+  final bool isLast;
 
   TextInputType keyboardType;
   int maxLength;
@@ -76,7 +78,16 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       height: widget.height,
       width: widget.width,
       child: TextFormField(
-        readOnly: widget.readonly == true ? true : false,
+        onFieldSubmitted: (_) {
+          if (widget.isLast) {
+            FocusScope.of(context).unfocus(); // close keyboard
+          } else {
+            FocusScope.of(context).nextFocus(); // move to next field
+          }
+        }, // Move to next field
+        textInputAction:
+            widget.isLast ? TextInputAction.done : TextInputAction.next,
+        readOnly: widget.readonly,
         validator: widget.validator,
         onSaved: widget.onSaved,
         onChanged: widget.onChanged,

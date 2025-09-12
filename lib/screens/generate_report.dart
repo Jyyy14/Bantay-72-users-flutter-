@@ -15,6 +15,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -70,7 +71,7 @@ class _ReportEmergencyScreenState extends State<ReportEmergencyScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text('Submit a Report', style: GoogleFonts.rubik(color: white)),
+        title: Text('Submit a Report', style: GoogleFonts.rubik(color: white)), 
         backgroundColor: Primary,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_sharp),
@@ -168,10 +169,10 @@ class _ReportEmergencyScreenState extends State<ReportEmergencyScreen> {
                                 });
                               },
                               pressed: selectedEmergency == 2,
-                              buttonName: 'Natural \nDisasters',
-                              fontSize: 18.0,
+                              buttonName: 'Missing',
+                              fontSize: 20.0,
                               icon: Icon(
-                                Icons.flood_rounded,
+                                Icons.person_search,
                                 color: Primary,
                                 size: 30.0,
                               ),
@@ -236,11 +237,11 @@ class _ReportEmergencyScreenState extends State<ReportEmergencyScreen> {
                                 });
                               },
                               pressed: selectedEmergency == 5,
-                              buttonName: 'Rescue',
+                              buttonName: 'Others',
                               icon: Icon(
-                                Icons.safety_divider_rounded,
+                                Icons.more_horiz,
                                 color: Primary,
-                                size: 35.0,
+                                size: 30.0,
                               ),
                             ),
                           ],
@@ -365,7 +366,7 @@ class _ReportEmergencyScreenState extends State<ReportEmergencyScreen> {
                               // 🗺️ MAP directly below the input
                               SizedBox(
                                 width: double.infinity,
-                                height: 220.h,
+                                height: 240.h,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0.r),
                                   child: Maps(
@@ -459,6 +460,34 @@ class _ReportEmergencyScreenState extends State<ReportEmergencyScreen> {
         },
       ),
     );
+  }
+
+  Future<LatLng> getUserLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception("Location services are disabled.");
+    }
+
+    // Request permissions
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception("Location permissions are denied.");
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception("Location permissions are permanently denied.");
+    }
+
+    // Get current position
+    Position position = await Geolocator.getCurrentPosition();
+    return LatLng(position.latitude, position.longitude);
   }
 
   Future<void> _displayReportDetails() async {
